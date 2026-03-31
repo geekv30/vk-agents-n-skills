@@ -1,0 +1,49 @@
+# Critical Workflow
+
+> **MUST FOLLOW ON EVERY TASK - DO NOT SKIP STEPS**
+
+## Phase-Based Execution
+
+| Step             | Action                            | Output                          |
+| ---------------- | --------------------------------- | ------------------------------- |
+| **1. Plan**      | Create todo list BEFORE any code  | TodoWrite with all phases       |
+| **2. Execute**   | Complete ONE todo item only       | Code changes for that phase     |
+| **3. Summarize** | Brief summary + key code snippets | `[file.tsx:42-58](path)` format |
+| **4. WAIT**      | STOP for user confirmation        | Do NOT proceed automatically    |
+| **5. Repeat**    | Go to step 2 for next phase       | Until all todos complete        |
+
+## Summary Format
+
+After each phase:
+
+- Use tables/bullets for changes made
+- Include "Key Code to Review" section with:
+  - Actual code snippets
+  - File:line links
+  - Brief notes on what changed
+
+## Critical Rules
+
+1. **NEVER execute multiple phases without stopping for review**
+2. **ALWAYS create TodoWrite before starting implementation**
+3. **ALWAYS mark todo as in_progress before starting work**
+4. **ALWAYS mark todo as completed immediately after finishing**
+5. **ALWAYS provide summary and WAIT after each phase**
+
+## Process Skills (Superpowers Plugin)
+
+These plugin skills are available globally. Use them at the right moments:
+
+| Skill | When to Invoke | How |
+| ----- | -------------- | --- |
+| **superpowers:brainstorming** | Before any creative work — new features, components, UI modifications | Must run before planning or implementation begins |
+| **superpowers:verification-before-completion** | Before claiming work is done, before commits or PRs | Run verification commands and confirm output before asserting success |
+| **superpowers:test-driven-development** | When implementing features or bugfixes | Write tests first, then implementation |
+| **superpowers:systematic-debugging** | When encountering bugs, test failures, or unexpected behavior | Root-cause analysis before proposing fixes |
+
+## After Significant Changes
+
+Check if these need updates:
+
+- `CLAUDE.md` files (root or package-level, if they exist)
+- `.claude/rules/*.md` files
