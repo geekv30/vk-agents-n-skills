@@ -8,22 +8,30 @@ A **Claude Code configuration repository** — agents, commands, skills, and rul
 
 ## New Machine Setup
 
-Clone the repo and run:
-
 ```bash
-# 1. Install Node.js (required for MCP servers)
-#    https://nodejs.org or: brew install node
+# 1. Clone
+git clone https://github.com/geekv30/vk-agents-n-skills.git
+cd vk-agents-n-skills
 
-# 2. Point Claude Code at this repo (add to ~/.claude/settings.json or via Claude Code settings)
-#    "projectPaths": ["/path/to/agents-and-skills"]
+# 2. Install Node.js (required for MCP servers — context7, playwright)
+brew install node   # or https://nodejs.org
 
-# 3. Optional: machine-local overrides (gitignored)
-cp settings.local.json.example settings.local.json  # if you need local permission overrides
+# 3. Install plugins (skills are bundled, but installing plugins keeps them up-to-date)
+claude plugin install superpowers
+claude plugin install frontend-design
+claude plugin install context7
+claude plugin install playwright
+claude plugin install figma
+
+# 4. Optional: machine-local permission overrides (gitignored)
+cp settings.local.json.example settings.local.json
 ```
 
-MCP servers (context7, playwright, figma) are declared in `.mcp.json` and auto-start via `npx` — no separate install needed beyond Node.js. Figma requires a Figma API token configured in Claude Code's Figma integration settings.
+**MCP servers** (context7, playwright, figma) are declared in `.mcp.json` and auto-start via `npx` — no separate install needed beyond Node.js. Figma requires a one-time API token in Claude Code's Figma integration settings.
 
-Skills (superpowers, frontend-design) are bundled directly in `skills/` — no plugin install required.
+**Skills** (superpowers, frontend-design) are bundled in `skills/` as a fallback. If the plugins are also installed (recommended), the plugin versions take precedence and stay up-to-date automatically.
+
+> **Conflict note**: If both the bundled skills and user-scope plugins are active simultaneously, Claude Code may see duplicate skill definitions. To avoid this, either uninstall the user-scope plugins (`claude plugin uninstall superpowers`) and rely solely on the bundled copies, or remove the bundled dirs (`skills/superpowers/`, `skills/frontend-design/`) and rely solely on the plugins.
 
 ## Repository Structure
 

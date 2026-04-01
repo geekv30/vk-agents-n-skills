@@ -1,34 +1,50 @@
 # Agents and Skills
 
-This repo stores AI coding workflow configuration:
+Portable Claude Code configuration — clone this repo on any machine to instantly pick up agents, commands, skills, and workflow rules.
 
-- `agents/` - agent personas
-- `commands/` - slash-command workflows
-- `rules/` - auto-loaded rules
-- `skills/` - reusable skill instructions
-- `.mcp.json` - MCP server config
+Not an app repo. No build step, no backend, no frontend.
 
-It is not an app repo. It does not contain a build, backend, or frontend project.
-
-## Getting Started
+## Quick Start
 
 ```bash
 git clone https://github.com/geekv30/vk-agents-n-skills.git
 cd vk-agents-n-skills
-```
 
-Open this folder in your Codex/Claude-style client and use it as the config/project path.
-
-## Setup
-
-No `npm install` is required.
-
-No build step is required.
-
-Node.js is only needed if you want the MCP servers in `.mcp.json` to run locally.
-
-```bash
+# MCP servers need Node.js
 brew install node
+
+# Install plugins (keeps skills up-to-date; bundled copies work as fallback)
+claude plugin install superpowers
+claude plugin install frontend-design
+claude plugin install context7
+claude plugin install playwright
+claude plugin install figma
+
+# Optional: machine-local permission overrides
+cp settings.local.json.example settings.local.json
 ```
 
-Optional: Figma MCP also needs a Figma API token in your client settings.
+Open this folder as your project path in Claude Code — everything loads automatically.
+
+## What's in the Repo
+
+| Path | Purpose |
+|------|---------|
+| `agents/` | 6 agent personas (sde2, architect, tester, cpo, design-manager, ui-engineer) |
+| `commands/` | 9 slash commands (`/implement`, `/prototype`, `/debug`, `/pr-review`, etc.) |
+| `rules/` | 4 auto-loaded rules (workflow, docs-mcp, github, prototype-conventions) |
+| `skills/` | 11 project skills + bundled superpowers + frontend-design |
+| `.mcp.json` | MCP server configs for context7, playwright, figma |
+| `settings.local.json` | Machine-local overrides — gitignored, copy from `.example` |
+
+## Dependencies
+
+| Dependency | Ships as | Needs |
+|-----------|----------|-------|
+| superpowers skills | Bundled in `skills/superpowers/` | Nothing |
+| frontend-design skill | Bundled in `skills/frontend-design/` | Nothing |
+| context7 MCP | `.mcp.json` → `npx @upstash/context7-mcp` | Node.js |
+| playwright MCP | `.mcp.json` → `npx @playwright/mcp@latest` | Node.js |
+| figma MCP | `.mcp.json` → `https://mcp.figma.com/mcp` | Figma API token |
+
+> **Note**: If the plugins are also installed at user scope, you may see duplicate skill definitions. Either uninstall the user-scope plugins, or remove `skills/superpowers/` and `skills/frontend-design/` from the repo and rely on the plugins alone.

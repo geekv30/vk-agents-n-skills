@@ -4,18 +4,49 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 
 ## What This Repository Is
 
-A **Codex configuration repository** — agents, commands, skills, and rules that govern how Codex operates in development workflows. No application code lives here; prototype apps targeted by commands like `/prototype` live in sibling directories (e.g., `try-Codex/prototype/`).
+A **Claude Code / Codex configuration repository** — agents, commands, skills, and rules that govern how Claude Code operates in development workflows. No application code lives here; prototype apps targeted by commands like `/prototype` live in sibling directories (e.g., `try-claude/prototype/`).
+
+## New Machine Setup
+
+```bash
+# 1. Clone
+git clone https://github.com/geekv30/vk-agents-n-skills.git
+cd vk-agents-n-skills
+
+# 2. Install Node.js (required for MCP servers — context7, playwright)
+brew install node   # or https://nodejs.org
+
+# 3. Install plugins (skills are bundled, but installing plugins keeps them up-to-date)
+claude plugin install superpowers
+claude plugin install frontend-design
+claude plugin install context7
+claude plugin install playwright
+claude plugin install figma
+
+# 4. Optional: machine-local permission overrides (gitignored)
+cp settings.local.json.example settings.local.json
+```
+
+**MCP servers** (context7, playwright, figma) are declared in `.mcp.json` and auto-start via `npx`. Figma requires a one-time API token in Claude Code's Figma integration settings.
+
+**Skills** (superpowers, frontend-design) are bundled in `skills/` as a fallback. Plugin versions take precedence when installed and stay up-to-date automatically.
+
+> **Conflict note**: If both bundled skills and user-scope plugins are active simultaneously, Claude Code may see duplicate skill definitions. To avoid this, either uninstall the user-scope plugins and rely on the bundled copies, or remove the bundled dirs (`skills/superpowers/`, `skills/frontend-design/`) and rely on the plugins.
 
 ## Repository Structure
 
 ```
 .
-├── agents/       # Agent persona definitions (6 agents)
-├── commands/     # Multi-agent orchestration commands (9 commands)
-├── rules/        # Auto-loaded rules injected into every conversation (4 rules)
-├── skills/       # SKILL.md methodology files invoked by agents (11 skills)
-├── settings.json # Permissions, hooks, and Codex configuration
-└── AGENTS.md     # This file
+├── agents/              # Agent persona definitions (6 agents)
+├── commands/            # Multi-agent orchestration commands (9 commands)
+├── rules/               # Auto-loaded rules injected into every conversation (4 rules)
+├── skills/              # SKILL.md methodology files
+│   ├── superpowers/     # Bundled superpowers skills (brainstorming, TDD, debugging, etc.)
+│   ├── frontend-design/ # Bundled frontend-design skill
+│   └── ...              # Project-specific skills (11)
+├── .mcp.json            # MCP server configs: context7, playwright, figma
+├── settings.local.json  # Machine-local overrides (gitignored)
+└── AGENTS.md            # This file
 ```
 
 ## File Format Conventions
@@ -37,7 +68,7 @@ skills:
 # Agent body: persona, mindset, base rules, skill-specific rules
 ```
 
-**Commands** (`commands/*.md`): Plain Markdown (no frontmatter). Define input format, agent orchestration flow, and output expectations. Commands are invoked as `/command-name` in Codex.
+**Commands** (`commands/*.md`): Plain Markdown (no frontmatter). Define input format, agent orchestration flow, and output expectations. Commands are invoked as `/command-name`.
 
 **Skills** (`skills/{name}/SKILL.md`):
 ```yaml
@@ -103,7 +134,7 @@ What are you trying to do?
 | `/update-docs` | SDE2 updates documentation |
 | `/analyze-deps` | SDE2 analyzes dependency updates |
 
-### Skills (11)
+### Project Skills (11)
 
 | Skill | Used By | Purpose |
 |-------|---------|---------|
@@ -128,15 +159,15 @@ What are you trying to do?
 | **github.md** | Conventional commits, PR templates, branch naming, `gh` CLI patterns |
 | **prototype-conventions.md** | React 19 + Vite 7 + ShadCN v4 + Tailwind CSS v4 stack conventions |
 
-### Plugin Dependencies
+### Bundled vs. External Dependencies
 
-Commands and agents depend on these user-scope plugins for process skills and MCP servers:
-
-- **superpowers** — Brainstorming, TDD, systematic-debugging, verification-before-completion (used by /implement, /pr-fix, /debug, sde2 agent)
-- **context7** — Primary documentation MCP for library APIs
-- **figma** — Design-to-code skills (ui-engineer agent)
-- **frontend-design** — Distinctive UI skill (ui-engineer agent)
-- **Playwright** — Visual verification MCP (/prototype command)
+| Dependency | How it ships | Requires |
+|-----------|--------------|----------|
+| **superpowers** skills | Bundled in `skills/superpowers/` | Nothing (plugin install keeps up-to-date) |
+| **frontend-design** skill | Bundled in `skills/frontend-design/` | Nothing (plugin install keeps up-to-date) |
+| **context7** MCP | `.mcp.json` → `npx @upstash/context7-mcp` | Node.js |
+| **playwright** MCP | `.mcp.json` → `npx @playwright/mcp@latest` | Node.js |
+| **figma** MCP | `.mcp.json` → `https://mcp.figma.com/mcp` | Figma API token |
 
 ## Key Workflow Rules
 
@@ -151,7 +182,7 @@ Commands and agents depend on these user-scope plugins for process skills and MC
 
 When adding or editing agents, commands, or skills:
 
-- Follow the YAML frontmatter format shown above — Codex parses these fields
+- Follow the YAML frontmatter format shown above
 - Agent `skills:` values must match directory names under `skills/`
 - Commands reference agents via relative paths (e.g., `../agents/sde2.md`)
-- After significant changes, check if `rules/*.md` files or this AGENTS.md need updates
+- After significant changes, check if `rules/*.md` files, `CLAUDE.md`, or this `AGENTS.md` need updates
