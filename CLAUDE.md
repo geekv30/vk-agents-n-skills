@@ -6,16 +6,39 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A **Claude Code configuration repository** — agents, commands, skills, and rules that govern how Claude Code operates in development workflows. No application code lives here; prototype apps targeted by commands like `/prototype` live in sibling directories (e.g., `try-claude/prototype/`).
 
+## New Machine Setup
+
+Clone the repo and run:
+
+```bash
+# 1. Install Node.js (required for MCP servers)
+#    https://nodejs.org or: brew install node
+
+# 2. Point Claude Code at this repo (add to ~/.claude/settings.json or via Claude Code settings)
+#    "projectPaths": ["/path/to/agents-and-skills"]
+
+# 3. Optional: machine-local overrides (gitignored)
+cp settings.local.json.example settings.local.json  # if you need local permission overrides
+```
+
+MCP servers (context7, playwright, figma) are declared in `.mcp.json` and auto-start via `npx` — no separate install needed beyond Node.js. Figma requires a Figma API token configured in Claude Code's Figma integration settings.
+
+Skills (superpowers, frontend-design) are bundled directly in `skills/` — no plugin install required.
+
 ## Repository Structure
 
 ```
 .
-├── agents/       # Agent persona definitions (6 agents)
-├── commands/     # Multi-agent orchestration commands (9 commands)
-├── rules/        # Auto-loaded rules injected into every conversation (4 rules)
-├── skills/       # SKILL.md methodology files invoked by agents (11 skills)
-├── settings.json # Permissions, hooks, and Claude Code configuration
-└── CLAUDE.md     # This file
+├── agents/            # Agent persona definitions (6 agents)
+├── commands/          # Multi-agent orchestration commands (9 commands)
+├── rules/             # Auto-loaded rules injected into every conversation (4 rules)
+├── skills/            # SKILL.md methodology files
+│   ├── superpowers/   # Bundled superpowers skills (brainstorming, TDD, debugging, etc.)
+│   ├── frontend-design/ # Bundled frontend-design skill
+│   └── ...            # Project-specific skills (11)
+├── .mcp.json          # MCP server configs: context7, playwright, figma
+├── settings.local.json # Machine-local overrides (gitignored)
+└── CLAUDE.md          # This file
 ```
 
 ## File Format Conventions
@@ -103,7 +126,7 @@ What are you trying to do?
 | `/update-docs` | SDE2 updates documentation |
 | `/analyze-deps` | SDE2 analyzes dependency updates |
 
-### Skills (11)
+### Project Skills (11)
 
 | Skill | Used By | Purpose |
 |-------|---------|---------|
@@ -128,15 +151,15 @@ What are you trying to do?
 | **github.md** | Conventional commits, PR templates, branch naming, `gh` CLI patterns |
 | **prototype-conventions.md** | React 19 + Vite 7 + ShadCN v4 + Tailwind CSS v4 stack conventions |
 
-### Plugin Dependencies
+### Bundled vs. External Dependencies
 
-Commands and agents depend on these user-scope plugins for process skills and MCP servers:
-
-- **superpowers** — Brainstorming, TDD, systematic-debugging, verification-before-completion (used by /implement, /pr-fix, /debug, sde2 agent)
-- **context7** — Primary documentation MCP for library APIs
-- **figma** — Design-to-code skills (ui-engineer agent)
-- **frontend-design** — Distinctive UI skill (ui-engineer agent)
-- **Playwright** — Visual verification MCP (/prototype command)
+| Dependency | How it ships | Notes |
+|-----------|--------------|-------|
+| **superpowers** skills | Bundled in `skills/superpowers/` | No install needed |
+| **frontend-design** skill | Bundled in `skills/frontend-design/` | No install needed |
+| **context7** MCP | `.mcp.json` → `npx @upstash/context7-mcp` | Needs Node.js |
+| **playwright** MCP | `.mcp.json` → `npx @playwright/mcp@latest` | Needs Node.js |
+| **figma** MCP | `.mcp.json` → `https://mcp.figma.com/mcp` | Needs Figma API token |
 
 ## Key Workflow Rules
 
