@@ -185,4 +185,5 @@ When adding or editing agents, commands, or skills:
 - Follow the YAML frontmatter format shown above — Claude Code parses these fields
 - Agent `skills:` values must match directory names under `skills/`
 - Commands reference agents via relative paths (e.g., `../agents/sde2.md`)
-- After significant changes, check if `rules/*.md` files or this CLAUDE.md need updates
+- After significant changes, check if `rules/*.md` files, this `CLAUDE.md`, **and `AGENTS.md`** need updates — `AGENTS.md` is the Codex-compatible mirror of `CLAUDE.md` and must stay in sync
+- `skills/shadcn` is a symlink to `../../.agents/skills/shadcn` (machine-local path outside this repo) — it will be broken on a fresh clone until the `.agents` directory exists on that machine
